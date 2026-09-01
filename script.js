@@ -602,19 +602,26 @@ S.Shape = (function () {
 $(function() {
     let isOpen = false;
 
-    // Tách từng chữ cho dòng birthdayMessage
+    // Tách từng từ và từng chữ cho dòng birthdayMessage (tránh gãy đôi từ)
     function splitBirthdayText() {
         var $msg = $('#birthdayMessage');
         var text = $msg.text().trim();
-        var chars = text.split('');
+        var words = text.split(/(\s+)/);
         var result = '';
-        $.each(chars, function(i, char) {
-            if (char === ' ') {
-                result += ' ';
-            } else if (char === '\n') {
-                result += '<br>';
-            } else {
-                result += '<span class="char">' + char + '</span>';
+        $.each(words, function(i, word) {
+            if (/^\s+$/.test(word)) {
+                if (word.includes('\n')) {
+                    result += '<br>';
+                } else {
+                    result += ' ';
+                }
+            } else if (word.length > 0) {
+                result += '<span class="word">';
+                var chars = word.split('');
+                $.each(chars, function(j, char) {
+                    result += '<span class="char">' + char + '</span>';
+                });
+                result += '</span>';
             }
         });
         $msg.html(result);
